@@ -1,0 +1,129 @@
+<template>
+    <div class="produtos-page">
+        <!-- Barra Superior -->
+        <BarraSuperior></BarraSuperior>
+        <!-- Drawer -->
+        <Drawer></Drawer>
+        <!-- conteúdo da página -->
+        <div class="content">
+          <!-- container com titulo e botão alinhado à direita -->
+          <div class="header-container">
+
+            <h1>Produtos</h1>
+            <!-- Botão de adicionar Produto -->
+             <div class="d-grid mb-4">
+                            <button type="submit" id="add-product-button" class="btn btn-primary"  
+                            v-on:click="adicionarProduto">Adicionar Produto</button>
+                        </div>
+          </div>
+
+            <!-- Tabela com produtos --->
+            <Table :items="items" :isBook="true"/>
+
+                        
+
+        </div>
+
+    </div>
+</template>
+
+<script>
+import Drawer from './Drawer.vue'
+import BarraSuperior from './BarraSuperior.vue'
+import Table from './Table.vue'
+
+export default {
+      components: {Drawer, BarraSuperior, Table},
+      name: 'Produtos',
+      methods: {
+
+      },
+      data() {
+  return {
+    items: [
+      {
+        name: "O Senhor dos Anéis: A Sociedade do Anel",
+        stock: 12,
+        price: 59.90,
+        author: "J.R.R. Tolkien",
+        pages: 576,
+        category: "Fantasia",
+        publisher: "HarperCollins"
+      },
+      {
+        name: "1984",
+        stock: 8,
+        price: 49.90,
+        author: "George Orwell",
+        pages: 336,
+        category: "Distopia",
+        publisher: "Companhia das Letras"
+      },
+      {
+        name: "O Pequeno Príncipe",
+        stock: 25,
+        price: 29.90,
+        author: "Antoine de Saint-Exupéry",
+        pages: 96,
+        category: "Ficção",
+        publisher: "Agir"
+      },
+      {
+        name: "Harry Potter e a Pedra Filosofal",
+        stock: 18,
+        price: 44.90,
+        author: "J.K. Rowling",
+        pages: 320,
+        category: "Fantasia",
+        publisher: "Rocco"
+      },
+      {
+        name: "A Arte da Guerra",
+        stock: 15,
+        price: 39.90,
+        author: "Sun Tzu",
+        pages: 160,
+        category: "Estratégia",
+        publisher: "L&PM Pocket"
+      }
+    ],
+    isBook: true,
+    isProduct: false
+  } 
+  
+}
+}
+</script>
+
+<style scoped>
+.content{
+    margin-top: 20px;
+    margin-left: 240px;
+    padding: 20px;
+    overflow-y: auto;
+    width: calc(100% - 240px);
+ 
+}
+
+.header-container{
+  display: flex;
+  justify-content: space-between;
+}
+
+#add-product-button {
+  background-color: #4796BD;
+  color: white;
+  border: none;
+  font-size: 20px;
+  border-radius: 20px;
+  transition: background-color 0.3s, transform 0.3s ease;
+}
+
+#add-product-button:hover{
+  background-color: rgb(255, 221, 27);
+    transform: scale(1.05); 
+    color: #333333;
+
+}
+</style>
+

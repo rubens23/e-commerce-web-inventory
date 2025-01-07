@@ -1,11 +1,7 @@
 <template>
     <div class="login-page">
         <!--Barra superior-->
-        <nav class="navbar" style="background-color: #4796BD;">
-            <div class="container-fluid">
-                <img src="/src/logo.png" alt="Logo" class="logo" style=" height: 40px; width: 80px;">
-            </div>
-        </nav>
+        <BarraSuperior></BarraSuperior>
        <!-- Conteúdo Principal-->
        <div class="container vh-100 d-flex align-items-center justify-content-center">
             <div class="row w-100">
@@ -48,7 +44,9 @@
 </template>
 
 <script>
+import BarraSuperior from './BarraSuperior.vue'
 export default{
+  components: { BarraSuperior },
     name: 'Login',
     methods: {
         submitLogin(){
