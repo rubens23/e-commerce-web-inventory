@@ -6,6 +6,7 @@ import Produtos from '../views/Produtos.vue'
 import Drawer from '../views/Drawer.vue'
 import BarraSuperior from '../views/BarraSuperior.vue'
 import Table from '../views/Table.vue'
+import AdicionarProduto from '../views/AdicionarProduto.vue'
 
 
 const routes = [
@@ -13,7 +14,9 @@ const routes = [
 
   {path: '/products', component: Products, name: 'Products'},
   {path: '/home', component: Home, name: 'Home'},
-  {path: '/produtos', component: Produtos, name: 'Produtos'}
+  {path: '/produtos', component: Produtos, name: 'Produtos'},
+  {path: '/adicionar-produto', component: AdicionarProduto, name: 'AdicionarProduto'}
+
 ]
 
 

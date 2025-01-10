@@ -91,6 +91,11 @@ export default {
     isProduct: false
   } 
   
+},
+methods: {
+  adicionarProduto(){
+    this.$router.push({name: 'AdicionarProduto'})
+  }
 }
 }
 </script>
@@ -126,4 +131,6 @@ export default {
 
 }
 </style>
+
+
 
