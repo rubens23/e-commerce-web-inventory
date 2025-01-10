@@ -16,7 +16,7 @@
                     <i class="bi bi-file-earmark-check-fill me-2"></i>
                     <span class="drawer-text">Pedidos</span>
                 </li>
-                 <li class="drawer-item">
+                 <li class="drawer-item" v-on:click="navigateTo('Vendas')">
                     <i class="bi bi-graph-up me-2"></i>
                     <span class="drawer-text">Vendas</span>
                 </li>
