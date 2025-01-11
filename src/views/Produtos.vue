@@ -18,7 +18,7 @@
           </div>
 
             <!-- Tabela com produtos --->
-            <Table :items="items" :isBook="true"/>
+            <Table :items="items" :columns="columns"/>
 
                         
 
@@ -87,8 +87,15 @@ export default {
         publisher: "L&PM Pocket"
       }
     ],
-    isBook: true,
-    isProduct: false
+    columns: [
+        { label: "Nome", key: "name" },
+        { label: "Quantidade", key: "stock" },
+        { label: "Preço", key: "price", format: value => `R$ ${value.toFixed(2)}` },
+        { label: "Autor", key: "author" },
+        { label: "Páginas", key: "pages" },
+        { label: "Categoria", key: "category" },
+        { label: "Editora", key: "publisher" }
+      ]
   } 
   
 },

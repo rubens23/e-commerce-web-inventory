@@ -12,7 +12,7 @@
                     <i class="bi bi-box-fill me-2"></i>
                     <span class="drawer-text">Produtos</span>
                 </li>
-                 <li class="drawer-item">
+                 <li class="drawer-item" v-on:click="navigateTo('Pedidos')">
                     <i class="bi bi-file-earmark-check-fill me-2"></i>
                     <span class="drawer-text">Pedidos</span>
                 </li>
