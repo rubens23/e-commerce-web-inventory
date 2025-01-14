@@ -9,6 +9,8 @@ import AdicionarProduto from '../views/AdicionarProduto.vue'
 import Vendas from '../views/Vendas.vue'
 import Pedidos from '../views/Pedidos.vue'
 import DetalhesPedido from '../views/DetalhesPedido.vue'
+import ModalExportarProdutos from '../views/ModalExportarProdutos.vue'
+import ModalImportarProdutos from '../views/ModalImportarProdutos.vue'
 
 
 const routes = [
@@ -19,7 +21,9 @@ const routes = [
   {path: '/adicionar-produto', component: AdicionarProduto, name: 'AdicionarProduto'},
   {path: '/vendas', component: Vendas, name: 'Vendas'},
   {path: '/pedidos', component: Pedidos, name: 'Pedidos'},
-  {path: '/detalhesPedido/:id', component: DetalhesPedido, name: 'DetalhesPedido'}
+  {path: '/detalhesPedido/:id', component: DetalhesPedido, name: 'DetalhesPedido'},
+  { path: '/importar-produtos', component: ModalImportarProdutos, name: 'ImportarProdutos' },
+  { path: '/exportar-produtos', component: ModalExportarProdutos, name: 'ExportarProdutos' }
 
 ]
 
