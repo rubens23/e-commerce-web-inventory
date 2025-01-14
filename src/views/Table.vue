@@ -2,13 +2,25 @@
   <table class="table">
     <thead>
       <tr>
+        <!-- coluna de editar e remover -->
+        <th></th>
         <th v-for="(column, index) in columns" :key="index">
           {{ column.label }}
         </th>
       </tr>
     </thead>
     <tbody>
+      
       <tr v-for="(item, index) in items" :key="index">
+         <!-- Coluna de ícones -->
+        <td>
+          <span @click="handleEdit(item)" style="cursor: pointer; margin-right: 20px;">
+            <i class="fas fa-edit"></i> 
+          </span>
+          <span @click="handleDelete(item)" style="cursor: pointer;">
+            <i class="fas fa-trash-alt"></i> 
+          </span>
+        </td>
         <td v-for="(column, index) in columns" :key="index">
           <!-- Verifica se a coluna é "actions" e o valor de actions é "Ver Detalhes" -->
           <span v-if="column.key === 'actions' && item.actions === 'Ver Detalhes'" 
@@ -21,6 +33,7 @@
           <span v-else>
             {{ formatData(item[column.key], column) }}
           </span>
+
         </td>
       
       </tr>
@@ -46,6 +59,12 @@ export default {
       console.log("cliquei em ver detalhes", orderId);
       this.$router.push({name: "DetalhesPedido", params: {id: orderId}});
     },
+     handleEdit(item) {
+      console.log("Editando item", item);
+    },
+    handleDelete(item) {
+      console.log("Removendo item", item);
+    },
   },
 };
 </script>
@@ -69,19 +88,8 @@ export default {
   color: #333333;
 }
 
-/*
-.table th, .table td{
-    padding: 10px;
-    text-align: left;
-    
-}
-*/
 
-.table td {
-  /*
-    border-top: 2px solid rgb(167, 166, 165);
-    */
-}
+
 
 /* Estiliza o cabeçalho */
 .table thead th {
@@ -91,4 +99,13 @@ export default {
   font-family: "Lato", sans-serif;
   font-size: 20px;
 }
+
+.table td{
+  padding: 10px;
+}
+
+.fas{
+  color: black;
+}
+
 </style>
