@@ -5,12 +5,17 @@ import Produtos from '../views/Produtos.vue'
 import Drawer from '../views/Drawer.vue'
 import BarraSuperior from '../views/BarraSuperior.vue'
 import Table from '../views/Table.vue'
+import Table2 from '../views/Table2.vue'
 import AdicionarProduto from '../views/AdicionarProduto.vue'
 import Vendas from '../views/Vendas.vue'
 import Pedidos from '../views/Pedidos.vue'
 import DetalhesPedido from '../views/DetalhesPedido.vue'
 import ModalExportarProdutos from '../views/ModalExportarProdutos.vue'
 import ModalImportarProdutos from '../views/ModalImportarProdutos.vue'
+import Estoque from '../views/Estoque.vue'
+import GerenciamentoMovimentacoes from '../views/GerenciamentoMovimentacoes.vue'
+import VisualizacaoAlertas from '../views/VisualizacaoAlertas.vue'
+import AjusteEstoque from '../views/AjusteEstoque.vue'
 
 
 const routes = [
@@ -23,7 +28,11 @@ const routes = [
   {path: '/pedidos', component: Pedidos, name: 'Pedidos'},
   {path: '/detalhesPedido/:id', component: DetalhesPedido, name: 'DetalhesPedido'},
   { path: '/importar-produtos', component: ModalImportarProdutos, name: 'ImportarProdutos' },
-  { path: '/exportar-produtos', component: ModalExportarProdutos, name: 'ExportarProdutos' }
+  { path: '/exportar-produtos', component: ModalExportarProdutos, name: 'ExportarProdutos' },
+  { path: '/estoque', component: Estoque, name: 'Estoque' },
+  {path: "/movimentacoes",name: "GestaoMovimentacoes",component: GerenciamentoMovimentacoes,},
+  { path: "/alertas",name: "VisualizacaoAlertas",component: VisualizacaoAlertas,},
+  { path: "/ajuste-estoque", name: "AjusteEstoque", component: AjusteEstoque,},
 
 ]
 

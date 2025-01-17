@@ -9,7 +9,7 @@
     <div class="content">
       <div class="header-container">
         <h1>Detalhes do Pedido</h1>
-        <button class="back-button" @click="goBack">Voltar</button>
+        <BackButton :route="'/Pedidos'"></BackButton>
       </div>
 
       <!-- Informações do Pedido -->
@@ -72,9 +72,10 @@
 <script>
 import Drawer from "./Drawer.vue";
 import BarraSuperior from "./BarraSuperior.vue";
+import BackButton from "./BackButton.vue";
 
 export default {
-  components: { Drawer, BarraSuperior },
+  components: { Drawer, BarraSuperior, BackButton },
   data() {
     return {
       order: null,
@@ -90,9 +91,7 @@ export default {
     }
   },
   methods: {
-    goBack() {
-      this.$router.push("/Pedidos");
-    },
+   
     formatDate(timestamp) {
       return new Date(timestamp).toLocaleDateString("pt-BR");
     },
@@ -188,14 +187,6 @@ export default {
   align-items: center;
 }
 
-.back-button {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 8px 16px;
-  cursor: pointer;
-}
 
 .order-info,
 .address-section,

@@ -20,6 +20,10 @@
                     <i class="bi bi-graph-up me-2"></i>
                     <span class="drawer-text">Vendas</span>
                 </li>
+                <li class="drawer-item" v-on:click="navigateTo('Estoque')">
+                    <i class="bi bi-grid me-2"></i>
+                    <span class="drawer-text">Estoque</span>
+                </li>
             </ul>
         </nav>
 
