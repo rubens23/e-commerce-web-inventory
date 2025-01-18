@@ -2,10 +2,6 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Login from '../views/Login.vue'
 import Home from '../views/Home.vue'
 import Produtos from '../views/Produtos.vue'
-import Drawer from '../views/Drawer.vue'
-import BarraSuperior from '../views/BarraSuperior.vue'
-import Table from '../views/Table.vue'
-import Table2 from '../views/Table2.vue'
 import AdicionarProduto from '../views/AdicionarProduto.vue'
 import Vendas from '../views/Vendas.vue'
 import Pedidos from '../views/Pedidos.vue'
@@ -16,6 +12,14 @@ import Estoque from '../views/Estoque.vue'
 import GerenciamentoMovimentacoes from '../views/GerenciamentoMovimentacoes.vue'
 import VisualizacaoAlertas from '../views/VisualizacaoAlertas.vue'
 import AjusteEstoque from '../views/AjusteEstoque.vue'
+import Pagamentos from '../views/Pagamentos.vue'
+import GerarRelatorio from '../views/GerarRelatorio.vue'
+import ResolucaoProblemas from '../views/ResolucaoProblemas.vue'
+import VisualizarMetricas from '../views/VisualizarMetricas.vue'
+import Usuarios from '../views/Usuarios.vue'
+import DetalhesUsuario from '../views/DetalhesAdministrador.vue'
+import EditarUsuario from '../views/EditarUsuario.vue'
+import RemoverUsuario from '../views/RemoverAdministrador.vue'
 
 
 const routes = [
@@ -33,6 +37,15 @@ const routes = [
   {path: "/movimentacoes",name: "GestaoMovimentacoes",component: GerenciamentoMovimentacoes,},
   { path: "/alertas",name: "VisualizacaoAlertas",component: VisualizacaoAlertas,},
   { path: "/ajuste-estoque", name: "AjusteEstoque", component: AjusteEstoque,},
+  { path: "/pagamentos", name: "Pagamentos", component: Pagamentos,},
+  { path: "/gerar-relatorio", name: "GerarRelatorio", component: GerarRelatorio,},
+  { path: "/resolucao-problemas", name: "ResolucaoProblemas", component: ResolucaoProblemas,},
+  { path: "/visualizar-metricas", name: "VisualizarMetricas", component: VisualizarMetricas,},
+  { path: "/usuarios", name: "Usuarios", component: Usuarios,},
+  { path: "/usuarios/detalhes/:id", name: "DetalhesUsuario", component: DetalhesUsuario,},
+  { path: "/usuarios/editar/:id", name: "EditarUsuario", component: EditarUsuario,},
+  { path: "/usuarios/remover/:id", name: "RemoverUsuario", component: RemoverUsuario,},
+
 
 ]
 
