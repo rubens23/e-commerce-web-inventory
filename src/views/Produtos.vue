@@ -68,59 +68,14 @@ import BarraSuperior from "./BarraSuperior.vue";
 import Table from "./Table.vue";
 import ModalImportarProdutos from "./ModalImportarProdutos.vue";
 import ModalExportarProdutos from "./ModalExportarProdutos.vue";
+import axios from "axios";
 
 export default {
   components: { Drawer, BarraSuperior, Table,ModalImportarProdutos, ModalExportarProdutos },
   name: "Produtos",
   data() {
     return {
-      items: [
-        {
-          name: "O Senhor dos Anéis: A Sociedade do Anel",
-          stock: 12,
-          price: 59.9,
-          author: "J.R.R. Tolkien",
-          pages: 576,
-          category: "Fantasia",
-          publisher: "HarperCollins",
-        },
-        {
-          name: "1984",
-          stock: 8,
-          price: 49.9,
-          author: "George Orwell",
-          pages: 336,
-          category: "Distopia",
-          publisher: "Companhia das Letras",
-        },
-        {
-          name: "O Pequeno Príncipe",
-          stock: 25,
-          price: 29.9,
-          author: "Antoine de Saint-Exupéry",
-          pages: 96,
-          category: "Ficção",
-          publisher: "Agir",
-        },
-        {
-          name: "Harry Potter e a Pedra Filosofal",
-          stock: 18,
-          price: 44.9,
-          author: "J.K. Rowling",
-          pages: 320,
-          category: "Fantasia",
-          publisher: "Rocco",
-        },
-        {
-          name: "A Arte da Guerra",
-          stock: 15,
-          price: 39.9,
-          author: "Sun Tzu",
-          pages: 160,
-          category: "Estratégia",
-          publisher: "L&PM Pocket",
-        },
-      ],
+      items: null,
       columns: [
         { label: "Nome", key: "name" },
         { label: "Quantidade", key: "stock" },
@@ -139,6 +94,9 @@ export default {
       mostrarExportarModal: false
     };
   },
+  mounted(){
+    this.fetchProdutos();
+  },
   methods: {
     adicionarProduto() {
       this.$router.push({ name: "AdicionarProduto" });
@@ -151,6 +109,17 @@ export default {
     console.log("estou no abrir exportar modal")
     this.mostrarExportarModal = true; // Controle de exibição do modal
   },
+  async fetchProdutos(){
+    try{
+      const response = await axios.get("http://localhost:8099/getBooks");
+      this.items = response.data;
+      console.log("Produtos adquiridos com sucesso: ", this.items);
+
+
+    }catch(error){
+      console.log("Erro ao buscar produtos: ", error);
+    }
+  }
 },
 }
 </script>
