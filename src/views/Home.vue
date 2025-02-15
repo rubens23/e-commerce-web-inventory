@@ -48,6 +48,21 @@
             </div>
           </div>
         </div>
+
+        <!-- Filtro -->
+        <div class="col-md-12 mt-4">
+          <div class="card shadow-sm border-0">
+            <div class="card-body">
+              <ChartFilter   @filter-changed="updatesalesChartData"/>
+
+            </div>
+
+          </div>
+        </div>
+
+
+
+
         <div class="col-md-6">
           <div class="card shadow-sm border-0">
             <div class="card-body">
@@ -56,6 +71,18 @@
             </div>
           </div>
         </div>
+
+        <!-- Filtro -->
+        <div class="col-md-12 mt-4">
+          <div class="card shadow-sm border-0">
+            <div class="card-body">
+              <ChartFilter   @filter-changed="updateOrdersChartData"/>
+
+            </div>
+
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
@@ -66,35 +93,59 @@ import Drawer from "./Drawer.vue";
 import BarraSuperior from "./BarraSuperior.vue";
 import Chart from "chart.js/auto";
 import axios from "axios";
+import ChartFilter from "./ChartFilter.vue"; 
 
 export default {
-  components: { Drawer, BarraSuperior },
+  components: { Drawer, BarraSuperior, ChartFilter },
   data() {
     return {
       totalVendas: "-",
-      pedidosPendentes: "-",
-      produtosEmEstoque: 150,
+      pedidosPendentes: 0,
+      produtosEmEstoque: 0,
+      salesChartData: null,
+      salesChartInstance: null,
+      ordersChartData: null,
+      ordersChartInstance: null
     };
   },
   mounted() {
     this.fetchTotalVendas();
     this.fetchPedidosPendentesQuantity();
+    this.fetchStockTotalQuantity();
+    this.getNewsalesChartData();
+    this.getNewOrdersChartData();
     this.$nextTick(() => {
-      this.renderSalesChart();
-      this.renderOrdersChart();
     });
   },
   methods: {
     renderSalesChart() {
+      if(this.salesChartInstance){
+        this.salesChartInstance.destroy();
+      }
+
+      if(!this.salesChartData || this.salesChartData.length === 0){
+        console.log("não tem dados de vendas");
+        return;
+      }
       const ctx = document.getElementById("salesChart").getContext("2d");
-      new Chart(ctx, {
+
+      // Extrai os meses e as quantidades de vendas do salesChartData
+      const labels = this.salesChartData.map(item => item.mes);
+      const salesData = this.salesChartData.map(item => item.totalSales);
+
+      // pega o tipo do gráfico
+      const label = this.salesChartData.length > 0 ? this.salesChartData[0].label : "Vendas";
+
+      console.log("o label que vai ser printado no grafico de vendas é: ", label)
+
+      this.salesChartInstance = new Chart(ctx, {
         type: "line",
         data: {
-          labels: ["Janeiro", "Fevereiro", "Março", "Abril"],
+          labels: labels,
           datasets: [
             {
-              label: "Vendas Mensais",
-              data: [5000, 7000, 8000, 10000],
+              label: label,
+              data: salesData,//quantidade de vendas
               borderColor: "#4796BD",
               backgroundColor: "rgba(71, 150, 189, 0.1)",
               borderWidth: 4,
@@ -114,15 +165,32 @@ export default {
       });
     },
     renderOrdersChart() {
+       if(this.ordersChartInstance){
+        this.ordersChartInstance.destroy();
+      }
+
+      if(!this.ordersChartData || this.ordersChartData.length === 0){
+        console.log("não tem dados de pedidos");
+        return;
+      }
+
       const ctx = document.getElementById("ordersChart").getContext("2d");
-      new Chart(ctx, {
+
+       // Extrai os meses e as quantidades de vendas do salesChartData
+      const labels = this.ordersChartData.map(item => item.mes);
+      const ordersData = this.ordersChartData.map(item => item.totalOrders);
+
+      // pega o tipo do gráfico
+      const label = this.ordersChartData.length > 0 ? this.ordersChartData[0].label : "Pedidos Realizados";
+
+      this.ordersChartInstance = new Chart(ctx, {
         type: "bar",
         data: {
-          labels: ["Janeiro", "Fevereiro", "Março", "Abril"],
+          labels: labels,
           datasets: [
             {
-              label: "Pedidos Realizados",
-              data: [50, 60, 40, 80],
+              label: label,
+              data: ordersData,
               backgroundColor: "#4796BD",
             },
           ],
@@ -160,7 +228,7 @@ export default {
         if(typeof response.data === "number"){
           this.pedidosPendentes = response.data;
         }else{
-          this.pedidosPendentes = "-"
+          this.pedidosPendentes = 0
 
 
         }
@@ -170,7 +238,84 @@ export default {
         console.error("Erro ao buscar a quantidade de pedidos pendentes:", error);
         this.pedidosPendentes = "Erro ao carregar dados"
       }
+    },
+    async fetchStockTotalQuantity(){
+      try{
+        const response = await axios.get("http://localhost:8099/getQuantidadeProdutosEmEstoque");
+        if(typeof response.data === "number"){
+          this.produtosEmEstoque = response.data;
+        }else{
+          this.produtosEmEstoque = 0;
+        }
+
+      }catch(error){
+        console.error("Erro ao buscar a quantidade total de produtos em estoque", error);
+        this.produtosEmEstoque = 0;
+      }
+    },
+    updatesalesChartData(filtroSelecionado, startDateMillis, endDateMillis){
+      console.log('Filtro recebido: ', filtroSelecionado)
+      try{
+         if (filtroSelecionado === 'personalizado') {
+      this.getNewsalesChartData(filtroSelecionado, startDateMillis, endDateMillis);
+    } else {
+      this.getNewsalesChartData(filtroSelecionado);
     }
+      
+      }catch(error){
+        console.error("Erro ao buscar dados do gráfico:", error);
+
+      }
+    },
+    updateOrdersChartData(filtroSelecionado, startDateMillis, endDateMillis){
+      console.log('Filtro recebido: ', filtroSelecionado)
+      try{
+         if (filtroSelecionado === 'personalizado') {
+      this.getNewOrdersChartData(filtroSelecionado, startDateMillis, endDateMillis);
+    } else {
+      this.getNewOrdersChartData(filtroSelecionado);
+    }
+      
+      }catch(error){
+        console.error("Erro ao buscar dados do gráfico:", error);
+
+      }
+    },
+    async getNewsalesChartData(filter = "last_quarter", startDateMillis = null, endDateMillis = null){
+      if(startDateMillis == null && endDateMillis == null){
+         const response = await axios.get(`http://localhost:8099/salesForChart?filter=${filter}`);
+         this.salesChartData = response.data;
+         this.renderSalesChart();
+
+      }else{
+         const response = await axios.get(`http://localhost:8099/salesForChart?dataInicio=${startDateMillis}&dataFim=${endDateMillis}`);
+         this.salesChartData = response.data;
+         this.renderSalesChart();
+
+      }
+     
+
+      console.log("dados recebidos!", this.salesChartData);
+
+    },
+    async getNewOrdersChartData(filter = "last_quarter", startDateMillis = null, endDateMillis = null){
+      if(startDateMillis == null && endDateMillis == null){
+         const response = await axios.get(`http://localhost:8099/ordersForChart?filter=${filter}`);
+         this.ordersChartData = response.data;
+         this.renderOrdersChart();
+
+      }else{
+         const response = await axios.get(`http://localhost:8099/ordersForChart?dataInicio=${startDateMillis}&dataFim=${endDateMillis}`);
+         this.ordersChartData = response.data;
+         this.renderOrdersChart();
+
+
+      }
+     
+
+      console.log("dados de pedidos recebidos!", this.ordersChartData);
+
+    },
   },
 };
 </script>
@@ -194,4 +339,5 @@ export default {
 .row {
   margin-bottom: 20px;
 }
+
 </style>
