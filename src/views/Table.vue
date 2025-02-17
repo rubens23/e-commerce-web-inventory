@@ -2,7 +2,6 @@
   <table class="table">
     <thead>
       <tr>
-        <!-- coluna de editar e remover -->
         <th></th>
         <th v-for="(column, index) in columns" :key="index">
           {{ column.label }}
@@ -42,6 +41,9 @@
 </template>
 
 <script>
+
+import axios from "axios";
+
 export default {
   name: "Table",
   props: {
@@ -62,8 +64,23 @@ export default {
      handleEdit(item) {
       console.log("Editando item", item);
     },
-    handleDelete(item) {
-      console.log("Removendo item", item);
+    async handleDelete(item) {
+      const confirmacao = window.confirm(`Tem certeza que deseja excluir o produto "${item.name}"?`);
+
+      if(!confirmacao){
+        return;
+      }
+
+      try{
+        await axios.delete(`http://localhost:8099/deleteBook/${item.id}`);
+        this.$emit("item-excluido", item.id);
+        console.log(`Produto "${item.name}" excluído com sucesso.`);
+        alert("Produto excluído com sucesso!")
+
+      }catch(error){
+        console.error("Erro ao excluir o produto:", error);
+        alert("Erro ao excluir o produto. Tente novamente.");
+      }
     },
   },
 };

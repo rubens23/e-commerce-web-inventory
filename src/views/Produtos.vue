@@ -46,7 +46,7 @@
       </div>
 
       <!-- Tabela com produtos --->
-      <Table :items="items" :columns="columns" />
+      <Table :items="items" :columns="columns" @item-excluido="removerProdutoLocalmente"/>
 
       <div>
       <ModalImportarProdutos :mostrar="mostrarImportarModal" @close="mostrarImportarModal = false" />
@@ -108,6 +108,9 @@ export default {
   abrirExportarModal() {
     console.log("estou no abrir exportar modal")
     this.mostrarExportarModal = true; // Controle de exibição do modal
+  },
+  removerProdutoLocalmente(itemId){
+    this.items = this.items.filter(item => item.id !== itemId)
   },
   async fetchProdutos(){
     try{
