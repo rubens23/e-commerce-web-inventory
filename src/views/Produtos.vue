@@ -46,7 +46,8 @@
       </div>
 
       <!-- Tabela com produtos --->
-      <Table :items="items" :columns="columns" @item-excluido="removerProdutoLocalmente"/>
+      <Table :items="items" :columns="columns" @item-excluido="removerProdutoLocalmente"
+      @editar-item="editarProduto"/>
 
       <div>
       <ModalImportarProdutos :mostrar="mostrarImportarModal" @close="mostrarImportarModal = false" />
@@ -100,6 +101,12 @@ export default {
   methods: {
     adicionarProduto() {
       this.$router.push({ name: "AdicionarProduto" });
+    },
+    editarProduto(item){
+      console.log('estou aqui no metodo do clique de editar');
+      console.log('aqui está o item que vai ser editado: ', item);
+      this.$router.push({name: "EditarProduto", params: {id: item.id}});
+
     },
     abrirImportarModal() {
     console.log("estou no abrir importar modal")

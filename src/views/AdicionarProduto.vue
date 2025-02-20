@@ -107,14 +107,22 @@
 
           <!-- Exibir pré-visualização da imagem -->
           <div v-if="previewImage" class="image-preview">
-            <img :src="previewImage" alt="Pré-visualização da capa do livro" class="img-thumbnail"/>
+            <img
+              :src="previewImage"
+              alt="Pré-visualização da capa do livro"
+              class="img-thumbnail"
+            />
           </div>
 
           <!-- Botão de adicionar Produto -->
           <div class="container-submit-button">
-            <button type="submit" class="btn btn-primary add-product-button"
-            @click="adicionarProduto">
-              <i class="fas fa-plus"></i> Adicionar Produto
+            <button
+              type="submit"
+              class="btn btn-primary add-product-button"
+              @click="isEditing ? salvarAlteracoes() : adicionarProduto()"
+            >
+              <i class="fa" :class="isEditing ? 'fa-save' : 'fa-plus'"></i>
+              {{ isEditing ? "Salvar Alterações" : "Adicionar Produto" }}
             </button>
           </div>
         </div>
@@ -141,30 +149,46 @@ export default {
         author: "",
         publisher: "",
         pages: "",
-        bookCover: null, 
+        bookCover: null,
       },
       previewImage: null, // Para armazenar a URL da pré-visualização
+      isEditing: false,
     };
   },
+  created() {
+    const productId = this.$route.params.id;
+
+    if (productId) {
+      this.isEditing = true;
+      this.fetchProduto(productId);
+    } else {
+      this.isEditing = false;
+      console.error("ID do produto não encontrado nos parâmetros da rota");
+    }
+  },
+
   methods: {
-    async adicionarProduto(){
-      try{
+    async adicionarProduto() {
+      try {
         const formData = new FormData();
 
         // Adiciona a imagem ao formData, se houver
-        if(this.product.bookCover){
+        if (this.product.bookCover) {
           formData.append("file", this.product.bookCover);
         }
 
         // Tenta fazer o upload da imagem
-        const response = await axios.post('http://localhost:8099/makeProductImageUrl', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
+        const response = await axios.post(
+          "http://localhost:8099/makeProductImageUrl",
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
           }
-        });
+        );
 
         console.log("Tentando gerar o url da imagem:", response);
-
 
         // Se a imagem foi enviada com sucesso, a URL será retornada
         const imageUrl = response.data.imageUrl;
@@ -174,33 +198,95 @@ export default {
           ...this.product,
           bookCover: imageUrl,
           id: "",
-          createdAt: Date.now()
+          createdAt: Date.now(),
         };
 
         console.log("Vou salvar o seguinte produto:", newProduct);
 
-
         // Agora envia o produto para o backend
-        await axios.post('http://localhost:8099/saveNewBook', newProduct);
+        await axios.post("http://localhost:8099/saveNewBook", newProduct);
 
         alert("Produto adicionado com sucesso");
-
-      }catch(error){
+      } catch (error) {
         console.error("Erro ao adicionar produto:", error);
         alert("Falha ao adicionar o produto. Tente novamente.");
-
       }
     },
-    handleFileUpload(event){
+    async salvarAlteracoes() {
+      try {
+        let imageUrl = this.product.bookCover;
+
+        // Se o usuário selecionou uma nova imagem, faz o upload
+        if (this.product.bookCover instanceof File) {
+          const formData = new FormData();
+          formData.append("file", this.product.bookCover);
+
+          const imageResponse = await axios.post(
+            "http://localhost:8099/makeProductImageUrl",
+            formData,
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+              },
+            }
+          );
+
+          console.log("Nova imagem enviada:", imageResponse);
+          imageUrl = imageResponse.data.imageUrl;
+        }
+
+        // Cria o objeto atualizado do produto/livro
+        const updatedBook = {
+          id: this.product.id,
+          name: this.product.name,
+          description: this.product.description,
+          price: this.product.price,
+          stock: this.product.stock,
+          category: this.product.category,
+          author: this.product.author,
+          publisher: this.product.publisher,
+          pages: this.product.pages,
+          bookCover: imageUrl, // Atualiza a imagem se necessário
+          createdAt: this.product.createdAt, // Mantém a data de criação original
+        };
+
+        console.log("Enviando livro atualizado: ", updatedBook);
+
+        await axios.put(`http://localhost:8099/updateBook/${this.product.id}`, updatedBook);
+
+        alert("Livro atualizado com sucesso!");
+
+
+      } catch (error) {
+        console.error("Erro ao salvar alterações: ", error);
+        alert("Falha ao atualizar o livro. Tente novamente.");
+      }
+    },
+    async fetchProduto(productId) {
+      try {
+        const response = await axios.get(
+          `http://localhost:8099/getBookById/${productId}`
+        );
+
+        if (response.data) {
+          this.product = response.data;
+          this.previewImage = this.product.bookCover;
+          console.log("obtive a resposta", this.product);
+        }
+      } catch (error) {
+        console.log("Erro ao buscar produto: ", error);
+      }
+    },
+    handleFileUpload(event) {
       const file = event.target.files[0];
 
-      if(file){
+      if (file) {
         this.product.bookCover = file;
 
         // Criar uma URL temporária para a imagem
         this.previewImage = URL.createObjectURL(file);
       }
-    }
+    },
   },
 };
 </script>
@@ -272,7 +358,7 @@ export default {
   justify-content: center;
 }
 
-.image-preview img{
+.image-preview img {
   max-width: 200px;
   margin-top: 10px;
   border-radius: 5px;

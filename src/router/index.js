@@ -28,6 +28,7 @@ const routes = [
   {path: '/home', component: Home, name: 'Home'},
   {path: '/produtos', component: Produtos, name: 'Produtos'},
   {path: '/adicionar-produto', component: AdicionarProduto, name: 'AdicionarProduto'},
+  {path: '/editar-produto/:id', component: AdicionarProduto, name: 'EditarProduto'},
   {path: '/vendas', component: Vendas, name: 'Vendas'},
   {path: '/pedidos', component: Pedidos, name: 'Pedidos'},
   {path: '/detalhesPedido/:id', component: DetalhesPedido, name: 'DetalhesPedido'},

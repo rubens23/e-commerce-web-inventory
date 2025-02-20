@@ -62,7 +62,9 @@ export default {
       this.$router.push({name: "DetalhesPedido", params: {id: orderId}});
     },
      handleEdit(item) {
-      console.log("Editando item", item);
+      console.log("cliquei em editar produto");
+      this.$emit("editar-item", item);
+      
     },
     async handleDelete(item) {
       const confirmacao = window.confirm(`Tem certeza que deseja excluir o produto "${item.name}"?`);
