@@ -16,6 +16,8 @@
         :items="orders"
         :columns="columns"
         @view-details="viewOrderDetails"
+        @item-excluido="removerPedido"
+        @editar-item="editarPedido"
       />
     </div>
   </div>
@@ -25,70 +27,14 @@
 import Drawer from "./Drawer.vue";
 import BarraSuperior from "./BarraSuperior.vue";
 import Table from "./Table.vue";
+import axios from "axios";
 
 export default {
   components: { Drawer, BarraSuperior, Table },
   data() {
     return {
       orders:[
-    {
-      id: "1",
-      userId: "user1",
-      actions: "Ver Detalhes",
-      items: [
-        { id: "item1", productId: "prod1", quantity: 2, price: 50.00 },
-        { id: "item2", productId: "prod2", quantity: 1, price: 40.00 }
-      ],
-      totalAmount: 140.00,
-      address: {
-        street: "Rua A",
-        number: "123",
-        city: "São Paulo",
-        state: "SP",
-        zipCode: "12345-678"
-      },
-      orderStatus: "Processing",
-      createdAt: 1678749200000, // Exemplo de timestamp
-      updatedAt: null
-    },
-    {
-      id: "2",
-      userId: "user2",
-      items: [
-        { id: "item3", productId: "prod3", quantity: 1, price: 60.00 }
-      ],
-      totalAmount: 60.00,
-      address: {
-        street: "Rua B",
-        number: "456",
-        city: "Rio de Janeiro",
-        state: "RJ",
-        zipCode: "23456-789"
-      },
-      orderStatus: "Shipped",
-      createdAt: 1678853200000,
-      updatedAt: null,
-      actions: "Ver Detalhes",
-    },
-    {
-      id: "3",
-      userId: "user3",
-      items: [
-        { id: "item4", productId: "prod4", quantity: 3, price: 33.33 }
-      ],
-      totalAmount: 100.00,
-      address: {
-        street: "Rua C",
-        number: "789",
-        city: "Belo Horizonte",
-        state: "MG",
-        zipCode: "34567-890"
-      },
-      orderStatus: "Delivered",
-      createdAt: 1678957200000,
-      updatedAt: null,
-      actions: "Ver Detalhes",
-    }
+    
   ],
 
       columns: [
@@ -108,11 +54,46 @@ export default {
       ],
     };
   },
+  mounted(){
+    this.fetchOrders();
+  },
   methods: {
     viewOrderDetails(orderId) {
       console.log("ID do Pedido:", orderId);
       this.$router.push({ name: 'DetalhesPedido', params: { id: orderId } });
     },
+    async removerPedido(item){
+     const confirmacao = window.confirm(`Tem certeza que deseja excluir o pedido ${item.id}?`);
+
+      if(!confirmacao){
+        return;
+      }
+
+      try{
+        await axios.delete(`http://localhost:8099/deleteOrder/${item.id}`);
+        console.log(`Pedido "${item.name}" excluído com sucesso.`);
+        alert("Pedido excluído com sucesso!")
+        this.orders = this.orders.filter(order => order.id !== item.id)
+
+
+      }catch(error){
+        console.error("Erro ao excluir o pedido:", error);
+        alert("Erro ao excluir o pedido. Tente novamente.");
+      }
+  },
+  async fetchOrders(){
+    try{
+      const response = await axios.get("http://localhost:8099/getOrders");
+      this.orders = response.data.map(order => ({
+        ...order,
+        actions: "Ver Detalhes"
+      }));
+      console.log("Pedidos adquiridos com sucesso: ", this.items);
+
+    }catch(error){
+      console.log("Erro ao buscar pedidos: ", error);
+    }
+  },
   },
 };
 </script>

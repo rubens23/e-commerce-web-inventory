@@ -73,6 +73,7 @@
 import Drawer from "./Drawer.vue";
 import BarraSuperior from "./BarraSuperior.vue";
 import BackButton from "./BackButton.vue";
+import axios from "axios";
 
 export default {
   components: { Drawer, BarraSuperior, BackButton },
@@ -96,77 +97,21 @@ export default {
       return new Date(timestamp).toLocaleDateString("pt-BR");
     },
     async fetchOrderDetails(orderId) {
-      // Mock de pedidos
-      const mockOrders = [
-        {
-          id: "1",
-          userId: "user1",
-          items: [
-            { id: "item1", productId: "prod1", quantity: 2, price: 50.0 },
-            { id: "item2", productId: "prod2", quantity: 1, price: 40.0 },
-          ],
-          totalAmount: 140.0,
-          address: {
-            street: "Rua A",
-            number: "123",
-            city: "São Paulo",
-            state: "SP",
-            zipCode: "12345-678",
-          },
-          orderStatus: "Processing",
-          createdAt: 1678749200000, // Exemplo de timestamp
-          updatedAt: null,
-        },
-        {
-          id: "2",
-          userId: "user2",
-          items: [
-            { id: "item3", productId: "prod3", quantity: 1, price: 60.0 },
-          ],
-          totalAmount: 60.0,
-          address: {
-            street: "Rua B",
-            number: "456",
-            city: "Rio de Janeiro",
-            state: "RJ",
-            zipCode: "23456-789",
-          },
-          orderStatus: "Shipped",
-          createdAt: 1678853200000,
-          updatedAt: null,
-        },
-        {
-          id: "3",
-          userId: "user3",
-          items: [
-            { id: "item4", productId: "prod4", quantity: 3, price: 33.33 },
-          ],
-          totalAmount: 100.0,
-          address: {
-            street: "Rua C",
-            number: "789",
-            city: "Belo Horizonte",
-            state: "MG",
-            zipCode: "34567-890",
-          },
-          orderStatus: "Delivered",
-          createdAt: 1678957200000,
-          updatedAt: null,
-        },
-      ];
+      try{
+        const response = await axios.get(
+          `http://localhost:8099/getOrderById/${orderId}`
+        );
 
-      const order = mockOrders.find((order) => order.id === orderId);
+        if(response.data){
+          this.order = response.data;
+          console.log("obtive o pedido", this.order);
 
-      if (order) {
-        this.order = order;
-        console.log("order obtido", this.order);
+        }
 
-        this.$nextTick(() => {
-          console.log("Vue atualizou o Dom");
-        });
-      } else {
-        console.error(`Pedido com ID ${orderId} não encontrado`);
+      }catch(error){
+        console.log("Erro ao buscar pedido: ", error);
       }
+      
     },
   },
 };

@@ -116,8 +116,24 @@ export default {
     console.log("estou no abrir exportar modal")
     this.mostrarExportarModal = true; // Controle de exibição do modal
   },
-  removerProdutoLocalmente(itemId){
-    this.items = this.items.filter(item => item.id !== itemId)
+  async removerProdutoLocalmente(item){
+     const confirmacao = window.confirm(`Tem certeza que deseja excluir o produto "${item.name}"?`);
+
+      if(!confirmacao){
+        return;
+      }
+
+      try{
+        await axios.delete(`http://localhost:8099/deleteBook/${item.id}`);
+        console.log(`Produto "${item.name}" excluído com sucesso.`);
+        alert("Produto excluído com sucesso!")
+        this.items = this.items.filter(item => item.id !== item.id)
+
+
+      }catch(error){
+        console.error("Erro ao excluir o produto:", error);
+        alert("Erro ao excluir o produto. Tente novamente.");
+      }
   },
   async fetchProdutos(){
     try{
