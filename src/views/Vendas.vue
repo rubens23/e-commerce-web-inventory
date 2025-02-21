@@ -11,17 +11,17 @@
         <div class="summary-card">
           <p class="summary-title">Total de Vendas</p>
           <p class="summary-value">
-            R$ {{ salesReport.totalAmount.toFixed(2) }}
+            {{ totalSales }}
           </p>
         </div>
         <div class="summary-card">
           <p class="summary-title">Total de Pedidos</p>
-          <p class="summary-value">{{ salesReport.totalOrders }}</p>
+          <p class="summary-value">{{ totalOrders }}</p>
         </div>
         <div class="summary-card">
           <p class="summary-title">Receita Total</p>
           <p class="summary-value">
-            R$ {{ salesReport.totalSales.toFixed(2) }}
+            R$ {{ totalAmount.toFixed(2) }}
           </p>
         </div>
       </div>
@@ -30,7 +30,17 @@
       <div class="charts-container">
         <div class="chart">
           <!-- Gráfico de tendências -->
-          <canvas id="trendChart"></canvas>
+          <canvas id="salesChart"></canvas>
+        </div>
+        <!-- Filtro -->
+        <div class="col-md-12 mt-4">
+          <div class="card shadow-sm border-0">
+            <div class="card-body">
+              <ChartFilter   @filter-changed="updatesalesChartData"/>
+
+            </div>
+
+          </div>
         </div>
         <div class="chart">
           <!-- Gráfico de produtos mais vendidos -->
@@ -45,27 +55,162 @@
 import Drawer from "./Drawer.vue";
 import BarraSuperior from "./BarraSuperior.vue";
 import Chart from "chart.js/auto";
+import axios from "axios";
+import ChartFilter from "./ChartFilter.vue"
 
 export default {
-  components: { Drawer, BarraSuperior },
+  components: { Drawer, BarraSuperior, ChartFilter },
   data() {
     return {
-      salesReport: {
-        totalAmount: 0,
-        totalOrders: 0,
-        totalSales: 0,
-        bestSellingProducts: [],
-      },
+      totalAmount: 0,
+      totalOrders: 0,
+      totalSales: 0,
+      bestSellingProducts: [],
+      salesChartData: null,
+      salesChartInstance: null,
+        
+      
     };
   },
   mounted() {
-    this.loadSalesReport();
+    //this.loadSalesReport();
+    this.fetchTotalVendas();
+    this.fetchTotalPedidos();
+    this.fetchReceitaTotal();
+    this.getNewsalesChartData();
     this.$nextTick(() => {
-      this.renderTrendChart();
       this.renderBestSellingChart();
     });
   },
   methods: {
+    async fetchTotalVendas(){
+      try{
+        const response = await axios.get("http://localhost:8099/getSalesTotal");
+        if(typeof response.data === "number"){
+          this.totalSales = response.data;
+        }else{
+          this.totalSales = "-"
+
+        }
+
+      }catch(error){
+        console.error("Erro ao buscar total de vendas: ", error);
+        this.totalSales = "-"
+      }
+     
+
+    },
+    async fetchTotalPedidos(){
+       try{
+        const response = await axios.get("http://localhost:8099/getOrdersQuantity");
+        if(typeof response.data === "number"){
+          this.totalOrders = response.data;
+        }else{
+          this.totalOrders = "-"
+
+        }
+
+      }catch(error){
+        console.error("Erro ao buscar total de pedidos: ", error);
+        this.totalOrders = "-"
+      }
+
+    },
+    async getNewsalesChartData(filter = "last_quarter", startDateMillis = null, endDateMillis = null){
+      if(startDateMillis == null && endDateMillis == null){
+         const response = await axios.get(`http://localhost:8099/salesForChart?filter=${filter}`);
+         this.salesChartData = response.data;
+         this.renderSalesChart();
+
+      }else{
+         const response = await axios.get(`http://localhost:8099/salesForChart?dataInicio=${startDateMillis}&dataFim=${endDateMillis}`);
+         this.salesChartData = response.data;
+         this.renderSalesChart();
+
+      }
+     
+
+      console.log("dados recebidos!", this.salesChartData);
+
+    },
+    async fetchReceitaTotal(){
+       try{
+        const response = await axios.get("http://localhost:8099/getSalesTotalAmount");
+        if(typeof response.data === "number"){
+          this.totalAmount = response.data;
+          console.log("peguei o totalamount, ", this.totalAmount);
+        }else{
+          this.totalAmount = "-"
+          console.log("não peguei o totalamount, ", this.totalAmount);
+
+        }
+
+      }catch(error){
+        console.error("Erro ao buscar total de vendas: ", error);
+        this.totalAmount = "-"
+      }
+
+    },
+    renderSalesChart() {
+      if(this.salesChartInstance){
+        this.salesChartInstance.destroy();
+      }
+
+      if(!this.salesChartData || this.salesChartData.length === 0){
+        console.log("não tem dados de vendas");
+        return;
+      }
+      const ctx = document.getElementById("salesChart").getContext("2d");
+
+      // Extrai os meses e as quantidades de vendas do salesChartData
+      const labels = this.salesChartData.map(item => item.mes);
+      const salesData = this.salesChartData.map(item => item.totalSales);
+
+      // pega o tipo do gráfico
+      const label = this.salesChartData.length > 0 ? this.salesChartData[0].label : "Vendas";
+
+      console.log("o label que vai ser printado no grafico de vendas é: ", label)
+
+      this.salesChartInstance = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: label,
+              data: salesData,//quantidade de vendas
+              borderColor: "#4796BD",
+              backgroundColor: "rgba(71, 150, 189, 0.1)",
+              borderWidth: 4,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: { grid: { display: false } },
+            x: { grid: { display: false } },
+          },
+          plugins: {
+            legend: { display: true },
+          },
+        },
+      });
+    },
+    updatesalesChartData(filtroSelecionado, startDateMillis, endDateMillis){
+      console.log('Filtro recebido: ', filtroSelecionado)
+      try{
+         if (filtroSelecionado === 'personalizado') {
+      this.getNewsalesChartData(filtroSelecionado, startDateMillis, endDateMillis);
+    } else {
+      this.getNewsalesChartData(filtroSelecionado);
+    }
+      
+      }catch(error){
+        console.error("Erro ao buscar dados do gráfico:", error);
+
+      }
+    },
     loadSalesReport() {
       // Simulação de dados
       this.salesReport = {
@@ -78,44 +223,7 @@ export default {
         ],
       };
     },
-    renderTrendChart() {
-      const ctx = document.getElementById("trendChart").getContext("2d");
-      new Chart(ctx, {
-        type: "line",
-        data: {
-          labels: ["Janeiro", "Fevereiro", "Março", "Abril"],
-          datasets: [
-            {
-              label: "Vendas ao Longo do Tempo",
-              data: [5000, 7000, 8000, 10000],
-              borderColor: "#4796BD",
-              backgroundColor: "rgba(71, 150, 189, 0.1)",
-              borderWidth: 4,
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          scales: {
-            y: {
-              grid: {
-                display: false, // Remove as linhas horizontais
-              },
-            },
-            x: {
-              grid: {
-                display: false, // Remove as linhas verticais
-              },
-            },
-          },
-          plugins: {
-            legend: {
-              display: true,
-            },
-          },
-        },
-      });
-    },
+    
     renderBestSellingChart() {
       const ctx = document.getElementById("bestSellingChart").getContext("2d");
       new Chart(ctx, {
