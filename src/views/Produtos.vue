@@ -124,7 +124,9 @@ export default {
       }
 
       try{
-        await axios.delete(`http://localhost:8099/deleteBook/${item.id}`);
+        await axios.delete(`http://localhost:8099/deleteBook/${item.id}`, {
+          withCredentials: true
+        });
         console.log(`Produto "${item.name}" excluído com sucesso.`);
         alert("Produto excluído com sucesso!")
         this.items = this.items.filter(item => item.id !== item.id)
@@ -137,7 +139,9 @@ export default {
   },
   async fetchProdutos(){
     try{
-      const response = await axios.get("http://localhost:8099/getBooks");
+      const response = await axios.get("http://localhost:8099/getBooks", {
+          withCredentials: true
+        });
       this.items = response.data;
       console.log("Produtos adquiridos com sucesso: ", this.items);
 

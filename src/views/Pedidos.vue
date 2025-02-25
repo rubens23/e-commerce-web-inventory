@@ -70,7 +70,9 @@ export default {
       }
 
       try{
-        await axios.delete(`http://localhost:8099/deleteOrder/${item.id}`);
+        await axios.delete(`http://localhost:8099/deleteOrder/${item.id}`, {
+          withCredentials: true
+        });
         console.log(`Pedido "${item.name}" excluído com sucesso.`);
         alert("Pedido excluído com sucesso!")
         this.orders = this.orders.filter(order => order.id !== item.id)
@@ -83,7 +85,9 @@ export default {
   },
   async fetchOrders(){
     try{
-      const response = await axios.get("http://localhost:8099/getOrders");
+      const response = await axios.get("http://localhost:8099/getOrders", {
+          withCredentials: true
+        });
       this.orders = response.data.map(order => ({
         ...order,
         actions: "Ver Detalhes"

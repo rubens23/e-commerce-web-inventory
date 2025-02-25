@@ -179,7 +179,9 @@ export default {
 
         // Tenta fazer o upload da imagem
         const response = await axios.post(
-          "http://localhost:8099/makeProductImageUrl",
+          "http://localhost:8099/makeProductImageUrl", {
+          withCredentials: true
+        },
           formData,
           {
             headers: {
@@ -204,7 +206,9 @@ export default {
         console.log("Vou salvar o seguinte produto:", newProduct);
 
         // Agora envia o produto para o backend
-        await axios.post("http://localhost:8099/saveNewBook", newProduct);
+        await axios.post("http://localhost:8099/saveNewBook", newProduct, {
+          withCredentials: true
+        });
 
         alert("Produto adicionado com sucesso");
       } catch (error) {
@@ -252,7 +256,9 @@ export default {
 
         console.log("Enviando livro atualizado: ", updatedBook);
 
-        await axios.put(`http://localhost:8099/updateBook/${this.product.id}`, updatedBook);
+        await axios.put(`http://localhost:8099/updateBook/${this.product.id}`, updatedBook,  {
+          withCredentials: true
+        });
 
         alert("Livro atualizado com sucesso!");
 
@@ -265,7 +271,9 @@ export default {
     async fetchProduto(productId) {
       try {
         const response = await axios.get(
-          `http://localhost:8099/getBookById/${productId}`
+          `http://localhost:8099/getBookById/${productId}`, {
+          withCredentials: true
+        }
         );
 
         if (response.data) {

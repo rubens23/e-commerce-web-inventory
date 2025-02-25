@@ -85,7 +85,9 @@ export default {
   methods: {
     async fetchTotalVendas(){
       try{
-        const response = await axios.get("http://localhost:8099/getSalesTotal");
+        const response = await axios.get("http://localhost:8099/getSalesTotal", {
+          withCredentials: true
+        });
         if(typeof response.data === "number"){
           this.totalSales = response.data;
         }else{
@@ -102,7 +104,9 @@ export default {
     },
     async fetchTotalPedidos(){
        try{
-        const response = await axios.get("http://localhost:8099/getOrdersQuantity");
+        const response = await axios.get("http://localhost:8099/getOrdersQuantity", {
+          withCredentials: true
+        });
         if(typeof response.data === "number"){
           this.totalOrders = response.data;
         }else{
@@ -118,12 +122,16 @@ export default {
     },
     async getNewsalesChartData(filter = "last_quarter", startDateMillis = null, endDateMillis = null){
       if(startDateMillis == null && endDateMillis == null){
-         const response = await axios.get(`http://localhost:8099/salesForChart?filter=${filter}`);
+         const response = await axios.get(`http://localhost:8099/salesForChart?filter=${filter}`, {
+          withCredentials: true
+         });
          this.salesChartData = response.data;
          this.renderSalesChart();
 
       }else{
-         const response = await axios.get(`http://localhost:8099/salesForChart?dataInicio=${startDateMillis}&dataFim=${endDateMillis}`);
+         const response = await axios.get(`http://localhost:8099/salesForChart?dataInicio=${startDateMillis}&dataFim=${endDateMillis}`, {
+          withCredentials: true
+         });
          this.salesChartData = response.data;
          this.renderSalesChart();
 
@@ -135,7 +143,9 @@ export default {
     },
     async fetchReceitaTotal(){
        try{
-        const response = await axios.get("http://localhost:8099/getSalesTotalAmount");
+        const response = await axios.get("http://localhost:8099/getSalesTotalAmount", {
+          withCredentials: true
+        });
         if(typeof response.data === "number"){
           this.totalAmount = response.data;
           console.log("peguei o totalamount, ", this.totalAmount);

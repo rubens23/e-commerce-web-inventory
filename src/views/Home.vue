@@ -209,7 +209,9 @@ export default {
     },
     async fetchTotalVendas(){
       try{
-        const response = await axios.get("http://localhost:8099/getSalesTotal");
+        const response = await axios.get("http://localhost:8099/getSalesTotal", {
+          withCredentials: true
+        });
         if(typeof response.data === "number"){
           this.totalVendas = response.data;
         }else{
@@ -224,7 +226,9 @@ export default {
     },
     async fetchPedidosPendentesQuantity(){
       try{
-        const response = await axios.get("http://localhost:8099/getPedidosPendentesQuantity");
+        const response = await axios.get("http://localhost:8099/getPedidosPendentesQuantity", {
+          withCredentials: true
+        });
         if(typeof response.data === "number"){
           this.pedidosPendentes = response.data;
         }else{
@@ -241,7 +245,9 @@ export default {
     },
     async fetchStockTotalQuantity(){
       try{
-        const response = await axios.get("http://localhost:8099/getQuantidadeProdutosEmEstoque");
+        const response = await axios.get("http://localhost:8099/getQuantidadeProdutosEmEstoque", {
+          withCredentials: true
+        });
         if(typeof response.data === "number"){
           this.produtosEmEstoque = response.data;
         }else{
@@ -283,12 +289,16 @@ export default {
     },
     async getNewsalesChartData(filter = "last_quarter", startDateMillis = null, endDateMillis = null){
       if(startDateMillis == null && endDateMillis == null){
-         const response = await axios.get(`http://localhost:8099/salesForChart?filter=${filter}`);
+         const response = await axios.get(`http://localhost:8099/salesForChart?filter=${filter}`, {
+          withCredentials: true
+         });
          this.salesChartData = response.data;
          this.renderSalesChart();
 
       }else{
-         const response = await axios.get(`http://localhost:8099/salesForChart?dataInicio=${startDateMillis}&dataFim=${endDateMillis}`);
+         const response = await axios.get(`http://localhost:8099/salesForChart?dataInicio=${startDateMillis}&dataFim=${endDateMillis}`, {
+          withCredentials: true
+        });
          this.salesChartData = response.data;
          this.renderSalesChart();
 
@@ -300,12 +310,16 @@ export default {
     },
     async getNewOrdersChartData(filter = "last_quarter", startDateMillis = null, endDateMillis = null){
       if(startDateMillis == null && endDateMillis == null){
-         const response = await axios.get(`http://localhost:8099/ordersForChart?filter=${filter}`);
+         const response = await axios.get(`http://localhost:8099/ordersForChart?filter=${filter}`, {
+          withCredentials: true
+        });
          this.ordersChartData = response.data;
          this.renderOrdersChart();
 
       }else{
-         const response = await axios.get(`http://localhost:8099/ordersForChart?dataInicio=${startDateMillis}&dataFim=${endDateMillis}`);
+         const response = await axios.get(`http://localhost:8099/ordersForChart?dataInicio=${startDateMillis}&dataFim=${endDateMillis}`, {
+          withCredentials: true
+        });
          this.ordersChartData = response.data;
          this.renderOrdersChart();
 
