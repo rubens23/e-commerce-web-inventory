@@ -27,7 +27,7 @@
 import Drawer from "./Drawer.vue";
 import BarraSuperior from "./BarraSuperior.vue";
 import Table from "./Table.vue";
-import axios from "axios";
+import api from "../api/axiosCustomConfig";
 
 export default {
   components: { Drawer, BarraSuperior, Table },
@@ -70,9 +70,7 @@ export default {
       }
 
       try{
-        await axios.delete(`http://localhost:8099/deleteOrder/${item.id}`, {
-          withCredentials: true
-        });
+        await api.delete(`http://localhost:8099/deleteOrder/${item.id}`);
         console.log(`Pedido "${item.name}" excluído com sucesso.`);
         alert("Pedido excluído com sucesso!")
         this.orders = this.orders.filter(order => order.id !== item.id)
@@ -85,9 +83,7 @@ export default {
   },
   async fetchOrders(){
     try{
-      const response = await axios.get("http://localhost:8099/getOrders", {
-          withCredentials: true
-        });
+      const response = await api.get("http://localhost:8099/getOrders");
       this.orders = response.data.map(order => ({
         ...order,
         actions: "Ver Detalhes"

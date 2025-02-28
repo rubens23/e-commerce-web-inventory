@@ -73,7 +73,7 @@
 import Drawer from "./Drawer.vue";
 import BarraSuperior from "./BarraSuperior.vue";
 import BackButton from "./BackButton.vue";
-import axios from "axios";
+import api from "../api/axiosCustomConfig";
 
 export default {
   components: { Drawer, BarraSuperior, BackButton },
@@ -98,7 +98,7 @@ export default {
     },
     async fetchOrderDetails(orderId) {
       try{
-        const response = await axios.get(
+        const response = await api.get(
           `http://localhost:8099/getOrderById/${orderId}`
         );
 

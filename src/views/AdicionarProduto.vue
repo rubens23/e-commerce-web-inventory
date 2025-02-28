@@ -134,7 +134,7 @@
 <script>
 import Drawer from "./Drawer.vue";
 import BarraSuperior from "./BarraSuperior.vue";
-import axios from "axios";
+import api from "../api/axiosCustomConfig";
 
 export default {
   components: { Drawer, BarraSuperior },
@@ -178,10 +178,8 @@ export default {
         }
 
         // Tenta fazer o upload da imagem
-        const response = await axios.post(
-          "http://localhost:8099/makeProductImageUrl", {
-          withCredentials: true
-        },
+        const response = await api.post(
+          "http://localhost:8099/makeProductImageUrl",
           formData,
           {
             headers: {
@@ -206,9 +204,7 @@ export default {
         console.log("Vou salvar o seguinte produto:", newProduct);
 
         // Agora envia o produto para o backend
-        await axios.post("http://localhost:8099/saveNewBook", newProduct, {
-          withCredentials: true
-        });
+        await api.post("http://localhost:8099/saveNewBook", newProduct);
 
         alert("Produto adicionado com sucesso");
       } catch (error) {
@@ -225,7 +221,7 @@ export default {
           const formData = new FormData();
           formData.append("file", this.product.bookCover);
 
-          const imageResponse = await axios.post(
+          const imageResponse = await api.post(
             "http://localhost:8099/makeProductImageUrl",
             formData,
             {
@@ -256,9 +252,7 @@ export default {
 
         console.log("Enviando livro atualizado: ", updatedBook);
 
-        await axios.put(`http://localhost:8099/updateBook/${this.product.id}`, updatedBook,  {
-          withCredentials: true
-        });
+        await api.put(`http://localhost:8099/updateBook/${this.product.id}`, updatedBook);
 
         alert("Livro atualizado com sucesso!");
 
@@ -270,10 +264,8 @@ export default {
     },
     async fetchProduto(productId) {
       try {
-        const response = await axios.get(
-          `http://localhost:8099/getBookById/${productId}`, {
-          withCredentials: true
-        }
+        const response = await api.get(
+          `http://localhost:8099/getBookById/${productId}`
         );
 
         if (response.data) {

@@ -69,7 +69,7 @@ import BarraSuperior from "./BarraSuperior.vue";
 import Table from "./Table.vue";
 import ModalImportarProdutos from "./ModalImportarProdutos.vue";
 import ModalExportarProdutos from "./ModalExportarProdutos.vue";
-import axios from "axios";
+import api from "../api/axiosCustomConfig";
 
 export default {
   components: { Drawer, BarraSuperior, Table,ModalImportarProdutos, ModalExportarProdutos },
@@ -124,9 +124,7 @@ export default {
       }
 
       try{
-        await axios.delete(`http://localhost:8099/deleteBook/${item.id}`, {
-          withCredentials: true
-        });
+        await api.delete(`http://localhost:8099/deleteBook/${item.id}`);
         console.log(`Produto "${item.name}" excluído com sucesso.`);
         alert("Produto excluído com sucesso!")
         this.items = this.items.filter(item => item.id !== item.id)
@@ -139,9 +137,7 @@ export default {
   },
   async fetchProdutos(){
     try{
-      const response = await axios.get("http://localhost:8099/getBooks", {
-          withCredentials: true
-        });
+      const response = await api.get("http://localhost:8099/getBooks");
       this.items = response.data;
       console.log("Produtos adquiridos com sucesso: ", this.items);
 
