@@ -11,6 +11,15 @@
         <!-- Divisão horizontal -->
         <div class="left-column">
           <p class="produto-text">Produto</p>
+          <!-- Exibir pré-visualização da imagem -->
+          <div v-if="previewImage" class="image-preview">
+            <img
+              :src="previewImage"
+              alt="Pré-visualização da capa do livro"
+              class="img-thumbnail"
+            />
+          </div>
+
         </div>
 
         <div class="right-column">
@@ -105,15 +114,7 @@
             />
           </div>
 
-          <!-- Exibir pré-visualização da imagem -->
-          <div v-if="previewImage" class="image-preview">
-            <img
-              :src="previewImage"
-              alt="Pré-visualização da capa do livro"
-              class="img-thumbnail"
-            />
-          </div>
-
+          
           <!-- Botão de adicionar Produto -->
           <div class="container-submit-button">
             <button
@@ -359,8 +360,9 @@ export default {
 }
 
 .image-preview img {
-  max-width: 200px;
+  max-width: 400px;
   margin-top: 10px;
   border-radius: 5px;
+  
 }
 </style>
