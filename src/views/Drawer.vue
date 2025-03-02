@@ -56,14 +56,13 @@ export default{
     name: 'Drawer',
     data(){
         return {
-            selectedItem: "",
+            selectedItem: this.$route.name,
         };
 
     },
     methods: {
         navigateTo(routeName){
-            console.log('Eu tenho que selecionar o item da drawer: ', routeName, 'selected item === routeName? ', this.selectedItem === routeName)
-            this.selectedItem = routeName;
+            console.log(routeName)
             this.$router.push({name: routeName})
         }
         
