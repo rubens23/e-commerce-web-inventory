@@ -22,7 +22,7 @@
                   <label for="produto">Produto</label>
                   <select v-model="movimentacao.produto" class="form-control" required>
                     <option disabled value="">Selecione um produto</option>
-                    <option v-for="produto in produtos" :key="produto.id" :value="produto.id">{{ produto.nome }}</option>
+                    <option v-for="produto in produtos" :key="produto.id" :value="produto.id">{{ produto.name }}</option>
                   </select>
                 </div>
               </div>
@@ -66,6 +66,7 @@ import Drawer from "./Drawer.vue";
 import BarraSuperior from "./BarraSuperior.vue";
 import Table2 from './Table2.vue';
 import BackButton from "./BackButton.vue";
+import api from '../api/axiosCustomConfig';
 
 
 export default {
@@ -73,15 +74,11 @@ export default {
    data() {
     return {
       movimentacao: {
-        produto: '',
+        produto: '', // aqui é armazenado o id do produto
         quantidade: '',
         tipo: 'entrada',
       },
-      produtos: [
-        { id: 1, nome: 'Produto 1' },
-        { id: 2, nome: 'Produto 2' },
-        { id: 3, nome: 'Produto 3' },
-      ],
+      produtos: null,
       movimentacoes: [
         { id: 1, produtoNome: 'Produto 1', quantidade: 10, tipo: 'entrada', data: '2025-01-10' },
         { id: 2, produtoNome: 'Produto 2', quantidade: 5, tipo: 'saida', data: '2025-01-11' },
@@ -94,19 +91,58 @@ export default {
       ],
     };
   },
+  mounted(){
+    this.fetchProdutos();
+  },
   methods: {
-    handleSubmit() {
-      const novaMovimentacao = {
-        id: this.movimentacoes.length + 1,
-        produtoNome: this.produtos.find(produto => produto.id === this.movimentacao.produto).nome,
-        ...this.movimentacao,
-        data: new Date().toLocaleDateString(),
-      };
+    async handleSubmit() {
+      const produtoEncontrado = this.produtos.find(produto => produto.id === this.movimentacao.produto);
+
+      if(!produtoEncontrado){
+        console.error("Produto não encontrado");
+        return;
+      }
+
+     
+
+      // atualizando o estoque no backend
+      try{
+        await api.put(`http://localhost:8099/updateBookStock/${produtoEncontrado.id}`,{
+          tipo: this.movimentacao.tipo,
+          quantidade: Number(this.movimentacao.quantidade),
+        });
+
+        console.log("Estoque atualizado com sucesso!");
+
+         // criando a movimentação localmente
+        const novaMovimentacao = {
+          id: this.movimentacoes.length + 1,
+          produtoNome: produtoEncontrado.name,
+          ...this.movimentacao,
+          data: new Date().toLocaleDateString(),
+        };
       this.movimentacoes.push(novaMovimentacao);
+      }catch(error){
+        console.error("Erro ao atualizar estoque: ", error);
+
+      }
+
+
+      // Resetando o formulário
       this.movimentacao.produto = '';
       this.movimentacao.quantidade = '';
       this.movimentacao.tipo = 'entrada';
     },
+    async fetchProdutos(){
+      try{
+        const response = await api.get("http://localhost:8099/getBooks");
+        this.produtos = response.data;
+        console.log("Produtos adquiridos com sucesso: ", this.produtos);
+
+      }catch(error){
+        console.log("Erro ao buscar produtos: ", error);
+      }
+    }
   },
   
 };
