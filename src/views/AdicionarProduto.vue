@@ -23,7 +23,14 @@
         </div>
 
         <div class="right-column">
+          <div class="container-back-button">
+            <BackButton :route="'/Produtos'"></BackButton>
+
+
+          </div>
+
           <!-- Inputs para adicionar o Produto -->
+
           <div class="form-group">
             <input
               type="text"
@@ -136,9 +143,10 @@
 import Drawer from "./Drawer.vue";
 import BarraSuperior from "./BarraSuperior.vue";
 import api from "../api/axiosCustomConfig";
+import BackButton from "./BackButton.vue"
 
 export default {
-  components: { Drawer, BarraSuperior },
+  components: { Drawer, BarraSuperior, BackButton },
   data() {
     return {
       product: {
@@ -357,6 +365,13 @@ export default {
   width: 60%;
   display: flex;
   justify-content: center;
+}
+
+.container-back-button {
+  width: 60%;
+  display: flex;
+  justify-content: end;
+  padding-bottom: 20px;
 }
 
 .image-preview img {
