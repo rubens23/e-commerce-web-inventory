@@ -48,6 +48,18 @@
               v-model="product.stock"
               class="form-control"
               placeholder="Quantidade"
+              :title="'Quantidade em estoque'"
+            />
+          </div>
+
+          <div class="form-group">
+            <input
+              type="number"
+              id="productMinimumStock"
+              v-model="product.minimumStock"
+              class="form-control"
+              placeholder="Quantidade mínima de estoque"
+              :title="'Quantidade mínima de estoque'"
             />
           </div>
 
@@ -58,6 +70,7 @@
               v-model="product.price"
               class="form-control"
               placeholder="Preço do produto"
+              :title="'Preço'"
             />
           </div>
 
@@ -107,6 +120,7 @@
               v-model="product.pages"
               class="form-control"
               placeholder="Número de páginas"
+              :title="'Número de páginas'"
             />
           </div>
 
@@ -159,6 +173,7 @@ export default {
         publisher: "",
         pages: "",
         bookCover: null,
+        minimumStock: ""
       },
       previewImage: null, // Para armazenar a URL da pré-visualização
       isEditing: false,
@@ -257,6 +272,7 @@ export default {
           pages: this.product.pages,
           bookCover: imageUrl, // Atualiza a imagem se necessário
           createdAt: this.product.createdAt, // Mantém a data de criação original
+          minimumStock: this.product.minimumStock
         };
 
         console.log("Enviando livro atualizado: ", updatedBook);

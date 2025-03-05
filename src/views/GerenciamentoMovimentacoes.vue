@@ -79,20 +79,19 @@ export default {
         tipo: 'entrada',
       },
       produtos: null,
-      movimentacoes: [
-        { id: 1, produtoNome: 'Produto 1', quantidade: 10, tipo: 'entrada', data: '2025-01-10' },
-        { id: 2, produtoNome: 'Produto 2', quantidade: 5, tipo: 'saida', data: '2025-01-11' },
-      ],
+      movimentacoes: null,
       columns: [
-        { label: 'Produto', key: 'produtoNome' },
+        { label: 'Produto', key: 'nomeProduto' },
         { label: 'Quantidade', key: 'quantidade' },
         { label: 'Tipo', key: 'tipo' },
         { label: 'Data', key: 'data' },
+        { label: 'Responsável', key: 'nomeResponsavel'},
       ],
     };
   },
   mounted(){
     this.fetchProdutos();
+    this.fetchMovimentacoes();
   },
   methods: {
     async handleSubmit() {
@@ -115,13 +114,30 @@ export default {
         console.log("Estoque atualizado com sucesso!");
 
          // criando a movimentação localmente
-        const novaMovimentacao = {
-          id: this.movimentacoes.length + 1,
-          produtoNome: produtoEncontrado.name,
-          ...this.movimentacao,
-          data: new Date().toLocaleDateString(),
-        };
+        // Criando a movimentação localmente
+    const novaMovimentacao = {
+      id: "",
+      nomeResponsavel: "",
+      nomeProduto: produtoEncontrado.name,
+      productId: produtoEncontrado.id,  // Enviar o ID do produto
+      tipo: this.movimentacao.tipo,
+      quantidade: Number(this.movimentacao.quantidade),
+      data: new Date().toLocaleDateString(),  // Data no formato "dd/MM/yyyy"
+      hora: new Date().toLocaleTimeString('pt-BR', { hour12: false }),  // Hora no formato "HH:mm:ss"
+      responsavel: null
+    };
+
+    console.log("Objeto novaMovimentacao sendo enviado: ", novaMovimentacao);
+
       this.movimentacoes.push(novaMovimentacao);
+
+      
+
+
+      // Salvar a movimentação no backend
+      await api.post('http://localhost:8099/saveStockMovement', novaMovimentacao);
+      console.log("Movimentação registrada com sucesso!");
+
       }catch(error){
         console.error("Erro ao atualizar estoque: ", error);
 
@@ -141,6 +157,17 @@ export default {
 
       }catch(error){
         console.log("Erro ao buscar produtos: ", error);
+      }
+    },
+    async fetchMovimentacoes(){
+      try{
+        const response = await api.get("http://localhost:8099//getAllBookStockMovements");
+        this.movimentacoes = response.data;
+        console.log("Movimentações adquiridas com sucesso: ", this.movimentacoes);
+
+
+      }catch(error){
+        console.log("Erro ao buscar movimentações: ", error);
       }
     }
   },

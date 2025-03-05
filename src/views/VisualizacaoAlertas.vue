@@ -27,23 +27,36 @@ import Drawer from "./Drawer.vue";
 import BarraSuperior from "./BarraSuperior.vue";
 import Table2 from './Table2.vue';
 import BackButton from './BackButton.vue';
+import api from "../api/axiosCustomConfig";
 
 export default {
   components: { Drawer, BarraSuperior, Table2, BackButton },
    data() {
     return {
-      produtosBaixos: [
-        { id: 1, nome: 'Produto 1', estoqueAtual: 3, estoqueMinimo: 5 },
-        { id: 2, nome: 'Produto 2', estoqueAtual: 2, estoqueMinimo: 4 },
-      ],
+      produtosBaixos: null,
       columns: [
-        { label: 'Produto', key: 'nome' },
-        { label: 'Estoque Atual', key: 'estoqueAtual' },
-        { label: 'Quantidade Mínima', key: 'estoqueMinimo' },
-        { label: 'Ação', key: 'acao', format: (value) => value ? 'Repor Estoque' : 'Ajustar' }, // Botão de ação
+        { label: 'Produto', key: 'name' },
+        { label: 'Estoque Atual', key: 'stock' },
+        { label: 'Quantidade Mínima', key: 'minimumStock' },
       ],
     };
   },
+  mounted(){
+    this.fetchProdutosComEstoqueBaixo();
+  },
+  methods:{
+    async fetchProdutosComEstoqueBaixo(){
+      try{
+        const response = await api.get("http://localhost:8099/booksWithStockBelowMinimum");
+        this.produtosBaixos = response.data;
+        console.log("Produtos adquiridos com sucesso: ", this.produtosBaixos);
+
+
+      }catch(error){
+        console.log("Erro ao buscar produtos: ", error);
+      }
+    }
+  }
   
 };
 </script>

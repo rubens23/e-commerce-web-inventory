@@ -41,20 +41,6 @@
           </div>
         </div>
 
-        <div class="col-md-4">
-          <div class="card shadow-sm border-0 mb-4">
-            <div class="card-body">
-              <h5 class="card-title">Ajustes Manuais</h5>
-              <p class="card-text text-muted">
-                Atualize manualmente o estoque em casos de necessidade.
-              </p>
-              <button 
-              class="custom-button w-100"
-              @click="ajustarEstoque"
-              >Ajustar Estoque</button>
-            </div>
-          </div>
-        </div>
       </div>
 
       <!-- Histórico de Alterações -->
@@ -84,25 +70,26 @@
 import Drawer from "./Drawer.vue";
 import Table2 from "./Table2.vue";
 import BarraSuperior from "./BarraSuperior.vue";
+import api from '../api/axiosCustomConfig';
+
 
 export default {
   components: { Drawer, BarraSuperior, Table2 },
   name: "Estoque",
     data() {
     return {
-      movimentacoes: [
-        { id: 1, data: "2025-01-14", produto: "Produto A", tipo: "Entrada", quantidade: 50, responsavel: "João" },
-        { id: 2, data: "2025-01-13", produto: "Produto B", tipo: "Saída", quantidade: 20, responsavel: "Maria" },
-        { id: 3, data: "2025-01-12", produto: "Produto C", tipo: "Ajuste", quantidade: 15, responsavel: "Carlos" },
-      ],
+      movimentacoes: null,
       columns: [
         { label: "Data", key: "data" },
-        { label: "Produto", key: "produto" },
+        { label: "Produto", key: "nomeProduto" },
         { label: "Tipo", key: "tipo" },
         { label: "Quantidade", key: "quantidade" },
-        { label: "Responsável", key: "responsavel" },
+        { label: "Responsável", key: "nomeResponsavel" },
       ],
     };
+  },
+  mounted(){
+    this.fetchMovimentacoes();
   },
   methods: {
     gerenciarMovimentacoes(){
@@ -114,6 +101,17 @@ export default {
     ajustarEstoque(){
       this.$router.push({name: "AjusteEstoque"});
     },
+    async fetchMovimentacoes(){
+      try{
+        const response = await api.get("http://localhost:8099//getAllBookStockMovements");
+        this.movimentacoes = response.data;
+        console.log("Movimentações adquiridas com sucesso: ", this.movimentacoes);
+
+
+      }catch(error){
+        console.log("Erro ao buscar movimentações: ", error);
+      }
+    }
   }
 };
 </script>
