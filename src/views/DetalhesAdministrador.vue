@@ -12,12 +12,10 @@
       <div class="card shadow-sm border-0">
         <div class="card-body">
           <h5 class="card-title">Informações do Administrador</h5>
-          <p><strong>Nome:</strong> {{ administrador.nome }}</p>
+          <p><strong>Nome:</strong> {{ administrador.name }}</p>
           <p><strong>E-mail:</strong> {{ administrador.email }}</p>
-          <p><strong>Status:</strong> {{ administrador.status }}</p>
-          <p><strong>Data de Criação:</strong> {{ administrador.dataCriacao }}</p>
-          <p><strong>Permissões:</strong> {{ administrador.permissoes.join(", ") }}</p>
-
+          <p><strong>Status:</strong> {{ administrador.status ? 'Ativo' : 'Inativo' }}</p>
+          <p><strong>Data de Criação:</strong> {{ administrador.creationDate }}</p>
         </div>
       </div>
     </div>
@@ -28,21 +26,27 @@
 import Drawer from "./Drawer.vue";
 import BarraSuperior from "./BarraSuperior.vue";
 import BackButton from "./BackButton.vue";
+import api from "../api/axiosCustomConfig";
 
 
 export default {
   components: { Drawer, BarraSuperior, BackButton },
   data() {
     return {
-      administrador: {
-        id: 1,
-        nome: "Admin 1",
-        email: "admin1@exemplo.com",
-        status: "Ativo",
-        dataCriacao: "2024-01-01",
-        permissoes: ["Gerenciar Usuários", "Visualizar Relatórios"]
-      }
+      administrador: null
     };
+  },
+  created(){
+    const adminId = this.$route.params.id;
+
+    if(adminId){
+      this.fetchAdminDetails(adminId);
+
+    }else{
+      console.error("ID do administrador não encontrado nos parâmetros da rota");
+
+    }
+
   },
   methods: {
     voltar() {
@@ -56,6 +60,21 @@ export default {
     fechar() {
       // Lógica para fechar o modal ou sair da tela
       console.log("Fechar detalhes");
+    },
+    async fetchAdminDetails(adminId){
+      try{
+        const response = await api.get(
+          `http://localhost:8099/getAdminById/${adminId}`
+        );
+
+        if(response.data){
+          this.administrador = response.data;
+          console.log("obtive o admin", this.administrador);
+        }
+
+      }catch(error){
+        console.log("Erro ao buscar administrador: ", error);
+      }
     }
   }
 };

@@ -23,18 +23,16 @@
 import Drawer from "./Drawer.vue";
 import BarraSuperior from "./BarraSuperior.vue";
 import TableWithActions from "./TableWithActions.vue"; // Importando o novo componente
+import api from "../api/axiosCustomConfig";
 
 export default {
   components: { Drawer, BarraSuperior, TableWithActions },
   name: "UsuariosPage",
   data() {
     return {
-      administradores: [
-        { id: 1, nome: "Admin 1", email: "admin1@exemplo.com", status: "Ativo" },
-        { id: 2, nome: "Admin 2", email: "admin2@exemplo.com", status: "Inativo" }
-      ],
+      administradores: null,
       columns: [
-        { label: "Nome", key: "nome" },
+        { label: "Nome", key: "name" },
         { label: "E-mail", key: "email" },
         { label: "Status", key: "status" },
         {
@@ -56,6 +54,9 @@ export default {
       ]
     };
   },
+  mounted(){
+    this.fetchAdministrators();
+  },
   methods: {
     verDetalhes(admin) {
       console.log("Ver detalhes do administrador", admin);
@@ -69,6 +70,16 @@ export default {
     removerAdministrador(admin) {
              this.$router.push({ name: "RemoverUsuario", params: { id: admin.id } });
 
+    },
+    async fetchAdministrators(){
+      try{
+        const response = await api.get("http://localhost:8099/getAllAdmins");
+        this.administradores = response.data;
+        console.log("administradores adquiridos com sucesso: ", this.administradores);
+
+      }catch(error){
+        console.log("Erro ao buscar administradores: ", error);
+      }
     }
   }
 };
