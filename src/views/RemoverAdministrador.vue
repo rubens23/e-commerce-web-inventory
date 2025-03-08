@@ -11,7 +11,7 @@
 
       <div class="card shadow-sm border-0">
         <div class="card-body text-center">
-          <p>Tem certeza que deseja remover <strong>{{ administrador.nome }}</strong>?</p>
+          <p>Tem certeza que deseja remover o administrador?</p>
 
           <div class="mb-3">
             <label for="senha" class="form-label">Digite sua senha para confirmar</label>
@@ -37,26 +37,54 @@
 import Drawer from "./Drawer.vue";
 import BarraSuperior from "./BarraSuperior.vue";
 import BackButton from "./BackButton.vue";
+import api from "../api/axiosCustomConfig";
+
 
 
 export default {
   components: { Drawer, BarraSuperior, BackButton },
   data() {
     return {
-      administrador: {
-        id: 1,
-        nome: "Admin 1"
-      },
+      adminId: "",
       senha: ""
     };
   },
+  created(){
+     const adminId = this.$route.params.id;
+
+    if(adminId){
+      this.adminId = adminId;
+
+    }else{
+      console.error("ID do administrador não encontrado nos parâmetros da rota");
+
+    }
+  },
   methods: {
-    confirmarRemocao() {
+    async confirmarRemocao() {
       if (!this.senha) {
         alert("Por favor, digite sua senha para confirmar.");
         return;
       }
-      console.log("Administrador removido:", this.administrador.id);
+      try {
+        // Chamar a rota de remoção de administrador
+        const response = await api.delete(`/removeAdmin/${this.adminId}`, {
+          data: {
+            senha: this.senha
+          }
+        });
+
+        if (response.status === 200) {
+          alert('Administrador removido com sucesso!');
+          this.$router.push('/Usuarios'); // Redireciona para a página de usuários
+        } else {
+          alert('Erro ao remover administrador');
+          console.log('Erro ao remover administrador: ' + response.data.message);
+        }
+      } catch (error) {
+        console.error(error);
+        alert('Erro ao remover administrador: ' + error.response?.data?.message || 'Erro inesperado');
+      }
     },
     voltar() {
       // Lógica para voltar à tela anterior

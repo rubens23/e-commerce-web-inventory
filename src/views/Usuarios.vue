@@ -41,10 +41,10 @@ export default {
               iconClass: "fas fa-info-circle",
               method: this.verDetalhes
             },
-            {
-              iconClass: "fas fa-edit",
-              method: this.editarAdministrador
-            },
+           // {
+            //  iconClass: "fas fa-edit",
+            //  method: this.editarAdministrador
+           // },
             {
               iconClass: "fas fa-trash-alt",
               method: this.removerAdministrador
@@ -74,7 +74,15 @@ export default {
     async fetchAdministrators(){
       try{
         const response = await api.get("http://localhost:8099/getAllAdmins");
-        this.administradores = response.data;
+
+        //muda o campo status para mostrar "ativo" ou "inativo"
+        //ao inves de true e false
+        this.administradores = response.data.map(
+          admin=>({
+            ...admin,
+            status: admin.status ? "Ativo" : "Inativo"
+          })
+        );
         console.log("administradores adquiridos com sucesso: ", this.administradores);
 
       }catch(error){
